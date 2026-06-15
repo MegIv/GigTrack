@@ -9,6 +9,9 @@ import com.bumptech.glide.Glide;
 import com.sisteminformasi.gigtrack.databinding.ActivityDetailPracticeBinding;
 import java.util.Locale;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 public class DetailPracticeActivity extends AppCompatActivity {
 
     private ActivityDetailPracticeBinding binding;
@@ -19,6 +22,7 @@ public class DetailPracticeActivity extends AppCompatActivity {
     private boolean running = false;
     private final Handler handler = new Handler(Looper.getMainLooper());
     private Runnable runnable;
+    private ExecutorService executorService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,6 +31,8 @@ public class DetailPracticeActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
 
         databaseHelper = new DatabaseHelper(this);
+
+        executorService = Executors.newSingleThreadExecutor();
 
         // Get Data from Intent
         String title = getIntent().getStringExtra("TITLE");
@@ -73,17 +79,21 @@ public class DetailPracticeActivity extends AppCompatActivity {
     }
 
     private void runTimer() {
-        runnable = new Runnable() {
-            @Override
-            public void run() {
+        executorService.execute(() -> {
+            while (true) {
                 if (running) {
                     seconds++;
+                    // Update UI harus dikembalikan ke Main Thread
+                    runOnUiThread(this::updateTimeDisplay);
                 }
-                updateTimeDisplay();
-                handler.postDelayed(this, 1000);
+                try {
+                    Thread.sleep(1000); // Jeda 1 detik di background thread
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                    break;
+                }
             }
-        };
-        handler.post(runnable);
+        });
     }
 
     private void updateTimeDisplay() {
@@ -97,6 +107,8 @@ public class DetailPracticeActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        handler.removeCallbacks(runnable);
+        if (executorService != null) {
+            executorService.shutdownNow();
+        }
     }
 }

@@ -75,6 +75,7 @@ public class ExploreFragment extends Fragment {
         RetrofitClient.getService().searchSongs(query).enqueue(new Callback<SearchResponse>() {
             @Override
             public void onResponse(Call<SearchResponse> call, Response<SearchResponse> response) {
+                if (!isAdded()) return;
                 binding.swipeRefresh.setRefreshing(false);
                 if (response.isSuccessful() && response.body() != null) {
                     adapter.setSongs(response.body().getData());
@@ -85,6 +86,7 @@ public class ExploreFragment extends Fragment {
 
             @Override
             public void onFailure(Call<SearchResponse> call, Throwable t) {
+                if (!isAdded()) return;
                 binding.swipeRefresh.setRefreshing(false);
                 Toast.makeText(requireContext(), "Offline Mode: Loading last history", Toast.LENGTH_SHORT).show();
                 loadOfflineData();
