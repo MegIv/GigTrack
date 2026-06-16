@@ -60,12 +60,12 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongViewHolder
         }
 
         public void bind(Song song) {
-            binding.tvSongTitle.setText(song.getTitle());
-            binding.tvSongArtist.setText(song.getArtist().getName());
-            Glide.with(binding.ivSongCover.getContext())
+            binding.tvTitle.setText(song.getTitle());
+            binding.tvArtist.setText(song.getArtist().getName());
+            Glide.with(binding.ivCover.getContext())
                     .load(song.getAlbum().getCoverMedium())
                     .placeholder(android.R.drawable.ic_menu_gallery)
-                    .into(binding.ivSongCover);
+                    .into(binding.ivCover);
         }
     }
 }

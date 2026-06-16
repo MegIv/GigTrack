@@ -53,30 +53,20 @@ public class ExploreFragment extends Fragment {
 
         // Search Button
         binding.btnSearch.setOnClickListener(v -> {
-            String query = binding.etSearch.getText().toString().trim();
+            String query = binding.etQuery.getText().toString().trim();
             if (!query.isEmpty()) {
                 searchSongs(query);
-            }
-        });
-
-        // Swipe Refresh
-        binding.swipeRefresh.setOnRefreshListener(() -> {
-            String query = binding.etSearch.getText().toString().trim();
-            if (!query.isEmpty()) {
-                searchSongs(query);
-            } else {
-                binding.swipeRefresh.setRefreshing(false);
             }
         });
     }
 
     private void searchSongs(String query) {
-        binding.swipeRefresh.setRefreshing(true);
+        binding.progressBar.setVisibility(View.VISIBLE);
         RetrofitClient.getService().searchSongs(query).enqueue(new Callback<SearchResponse>() {
             @Override
             public void onResponse(Call<SearchResponse> call, Response<SearchResponse> response) {
                 if (!isAdded()) return;
-                binding.swipeRefresh.setRefreshing(false);
+                binding.progressBar.setVisibility(View.GONE);
                 if (response.isSuccessful() && response.body() != null) {
                     adapter.setSongs(response.body().getData());
                 } else {
@@ -87,7 +77,7 @@ public class ExploreFragment extends Fragment {
             @Override
             public void onFailure(Call<SearchResponse> call, Throwable t) {
                 if (!isAdded()) return;
-                binding.swipeRefresh.setRefreshing(false);
+                binding.progressBar.setVisibility(View.GONE);
                 Toast.makeText(requireContext(), "Offline Mode: Loading last history", Toast.LENGTH_SHORT).show();
                 loadOfflineData();
             }
