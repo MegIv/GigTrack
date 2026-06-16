@@ -34,22 +34,26 @@ public class HomeFragment extends Fragment {
 
         themePreferences = new ThemePreferences(requireContext());
         databaseHelper = new DatabaseHelper(requireContext());
+        boolean isDark = themePreferences.isDarkMode();
+
+        if (isDark) {
+            binding.fabTheme.setImageResource(R.drawable.ic_moon);
+        } else {
+            binding.fabTheme.setImageResource(R.drawable.ic_sun);
+        }
 
         // Setup Theme Switch
-        binding.switchTheme.setChecked(themePreferences.isDarkMode());
-        binding.switchTheme.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            themePreferences.setDarkMode(isChecked);
-            if (isChecked) {
-                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
-            } else {
-                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
-            }
+        binding.fabTheme.setOnClickListener(v -> {
+            boolean newThemeState = !themePreferences.isDarkMode();
+            themePreferences.setDarkMode(newThemeState);
+
+            requireActivity().recreate();
         });
 
         // Setup RecyclerView
         adapter = new HistoryAdapter();
-        binding.rvHistory.setLayoutManager(new LinearLayoutManager(requireContext()));
-        binding.rvHistory.setAdapter(adapter);
+        binding.rvLatihan.setLayoutManager(new LinearLayoutManager(requireContext()));
+        binding.rvLatihan.setAdapter(adapter);
 
         loadHistory();
     }

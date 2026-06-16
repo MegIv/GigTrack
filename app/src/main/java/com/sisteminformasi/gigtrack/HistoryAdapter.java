@@ -46,7 +46,7 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.HistoryV
             binding.tvHistoryTitle.setText(history.getJudul());
             binding.tvHistoryArtist.setText(history.getArtis());
             binding.tvHistoryDuration.setText(history.getDurasi());
-            binding.tvHistoryNotes.setText(history.getCatatan());
+            binding.tvHistoryNote.setText(history.getCatatan());
         }
     }
 }
